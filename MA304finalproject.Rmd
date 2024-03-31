@@ -1,0 +1,408 @@
+---
+title: "MA304-Final Project"
+author: "Maryam Taj-2211714"
+output:
+  html_document: default
+  pdf_document: default
+date: "2023-04-26"
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+In this report, we are given information on Crime Incident cases that occurred in Dallas, USA in 2016, along with information about the Officer, subject, location, race, date, time, and other metrics.We'll aim to develop facts and arguments based on logic by investigating the data, and we'll offer our findings to benefit Dallas, Texas's legal system.
+
+One of the data sets supplied by the Centre for Policing Equity is the focus of this report, which tries to unearth any hidden insights. The first section is a brief analysis of the shared data. In the later on sections, I did analysis from different perspectives for this data set and then draws a conclusion.
+
+## Research Question
+
+The greatest challenge is automatically combining information from the census, police records, and other socioeconomic factors. The unpredictable and confused nature of shapefiles makes it difficult to do things like make guides of police action that incorporate both area line and statistics information. Due to the absence of federal data collection guidelines, normalizing and standardizing police incident data among agencies is particularly challenging.
+Some of the overarching criteria that will be used to assess are as follows:
+RQ1: How effective is the method for combining census data with shapefiles? How much manual labor is required? 
+Since CPE will not be able to live-test each submission, a good entry will be able to automate using shape files with multiple projections and properly demonstrate why it is effective at handling the challenge.
+RQ2: How exact and trustworthy is the investigation given by the proposed arrangement? How well does it link the location of police stations and population density?
+The best responses will be well-commented and made using the best coding techniques. Every graph and chart needs to be easy to read. Because CPE may use your work to demonstrate where stakeholders should take action, the outputs of your solution should be tailored for an audience of public officials and law enforcement professionals.
+
+The rate of public crime in the United States has been decreasing recently. This is the case, as has been observed. Because of the extensive use of computer-aided technology, the deployment of law enforcement personnel has become more efficient and effective. Huge volumes of data and the computing capability to analyse them have enabled these breakthroughs. There has been a recent uptick in the use of data science by law enforcement agencies as a means of making sense of all that raw information. Recent developments in crime analysis—including pattern reporting, connection studies, and accumulated behaviour displaying—have opened the door to proactive policing and lifesaving foresight. In predictive policing, crime hotspots are dynamically identified using statistical analysis, allowing for the preventative and proactive allocation of police resources. The use of predictive policing is an emerging and exciting field. Accordingly, predictive policing is currently one of the most critical areas of research. But there are many obstacles to overcome before we can develop a really predictive police strategy. When all factors are considered, the best option is the one responsible for data management. How can we effectively collect, analyse, and use this deluge of real-time information? How does one go about making a straightforward yet effective prediction engine? How can we develop a method that can effectively adapt to changing circumstances while consistently producing the same results? The following chapter goes into deeper depth on some of these topics. a review of the potential drawbacks of such a study, along with its aims, methods, and approaches to storing, maintaining, and analysing all facets of crime data. using R, a robust statistical programming language, in its bare-bones configuration for investigating anything.
+
+```{r cars, echo=FALSE}
+library(readr)
+dallas <- read_csv("37-00049_UOF-P_2016_prepped.csv")
+# Display the first few rows of the dataset
+head(dallas)
+# Display the structure of the dataset
+str(dallas)
+
+```
+
+## SECTION 1: DATA EXPLORATION
+
+The main objective of this report is to achieve or analyze the following objectives
+The provided dataset contains information on incidents involving police officers and subjects in a specific jurisdiction. The dataset includes 47 variables, including date and time of the incident, officer and subject demographic information, injury and force details, and location information.
+Regarding officer demographics, the dataset contains details on gender, race, date of recruitment, and number of years of service. Similar to that, subject demographics like ethnicity and gender are given.
+
+```{r, echo=FALSE}
+# Load required libraries
+library(tidyverse)
+
+# Examine the structure of the dataset
+str(dallas)
+
+# Summary of the dataset
+summary(dallas)
+
+# Examine the first few rows of the dataset
+head(dallas)
+
+# Examine the last few rows of the dataset
+tail(dallas)
+
+# Count the number of missing values in each column
+sapply(dallas, function(x) sum(is.na(x)))
+
+
+```
+
+
+## Table/Two-way table
+
+Bringing the dataset into R Studio is the first step. The read.csv() function is used to import the data collection in CSV format. We can assume the dataset was successfully downloaded and is located on our PC in the "Texas.csv" file.
+Using the head() function, you may see the first few columns of the dataset, giving you a feel for the structure. Next, we'll make use of the str() method to show off the data set's structure. This will include the variables' names, types, and initial values. By outlining the factors in the dataset and the information kinds that they belong to, this will help us decide which plots and graphs to utilise for information research. A frequency chart detailing the ratio of those of each race who were arrested to those who were not will pop up. The number of people of each race who were not detained is also available.
+
+
+```{r, echo=FALSE}
+# Create a two-way table of Race and Arrested variables
+table(dallas$SUBJECT_GENDER, dallas$SUBJECT_RACE)
+table(dallas$OFFICER_GENDER, dallas$OFFICER_RACE)
+
+```
+
+
+PLOTS
+To visualise the distribution of a categorical variable, we can use the ggplot2 utility in R to generate a bar or pie chart. Take, as an example, the necessity of creating a bar chart for the "Race" variable. The results of this will be displayed as a bar chart showing the distribution by race.
+BAR PLOT RACE
+Using the coord_polar() method found in ggplot2, to are able to generate a pie chart that represents the "SECTOR" variable.
+
+
+## BOX PLOT
+```{r}
+# Load the ggplot2 package
+library(ggplot2)
+
+
+# Create a bar plot of the Race variable
+ggplot(data = dallas, aes(x = SECTOR)) +
+  geom_bar()
+
+```
+
+For a visual representation of this data, see the pie chart down below. Dot plots can now be generated to demonstrate the spread of continuous data. Create a dot plot of the "Gender" variable to see how the two categories compare, for instance.
+As a result, a dot plot showing the age distribution of the dataset's participants will become available. The exploration of data can also make use of various plots and charts. Different types of plots and graphs may be more appropriate depending on the dataset and focus on concerns.
+
+## PIE CHART
+```{r}
+# Create a pie chart of the Race variable
+ggplot(data = dallas, aes(x = "", fill = dallas$SUBJECT_DESCRIPTION)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+
+```
+
+## DENSITY PLOT
+
+Using the ggplot2 package in R, we can create a thickness plot to better appreciate the spread of a constant variable. Think of a scenario in which a thickness guide of the "Orientation" variable might be helpful. A density map will display the range of ages represented in the data set.
+A thickness plot is a type of chart that depicts the estimated likelihood thickness capabilities of the data to demonstrate the extent to which a variable has spread. To generate the thickness plot, we measure the depth of the data by employing the KDE computation, a non-parametric method for evaluating the probable thickness capacity of an irregular variable.
+
+Using the thickness() feature, you may generate a thickness plot in R Studio. When given a data vector, this function calculates the estimated density and outputs a "density" object. This density object can then be visualised using the plot() method of R or another charting tool.
+The determined thickness capacity is depicted as a curve in the following figure, where the x-hub represents the variable's allowed values and the y-pivot represents thickness. The height of the curve and the area under the curve represent the relative probability density at each place. Density charts can be used to spot outliers, see how a distribution is structured, and compare the distributions of many different variables or groups. They can be used in tandem with other plots, such as box plots and histograms, to provide a more complete picture of the data.
+
+```{r}
+# Create a density plot of the gender variable
+ggplot(data = dallas, aes(x = SUBJECT_RACE)) +
+  geom_density()
+
+
+```
+
+## BOX PLOT
+
+A box plot can be generated to display the distribution of a categorical variable across categories using the ggplot2 tool in R. Consider the case where you are tasked with creating a box plot that incorporates the "Gender" and "Race" variables. A box plot will be used to display the racial breakdown of the age groups in the dataset.
+The box plot, often called a box-and-whisker plot, is a good example of this sort of story. For studying the distribution of a single variable over different types of data, this tool is invaluable.
+You may make a box plot in R Studio using the boxplot() function. Each information data vector obtained by the capability (which could be many) results in the generation of a separate case plot. The ensuing phrases paint a picture of a box with "whiskers" and, maybe, individual points outside the whiskers, representing the eventual plot:
+
+```{r}
+# Create a box plot of the gender variable by the Race variable
+ggplot(data = dallas, aes(x = OFFICER_YEARS_ON_FORCE, y = OFFICER_INJURY_TYPE)) +
+  geom_boxplot()
+
+```
+
+•	The IQR is the range of values between the median and the third quartile of a distribution, and is most often shown as a percentage. The median is depicted by the box's midpoint, while the first and third quartiles (Q1 and Q3, respectively) are shown by the box's bottom and top edges).
+•	A box's whiskers run from its corners to its minimum and maximum values. The stubbles can be located anywhere and are defined by minimum and maximum values within 1.5 times the IQR of the container bounds. Data points that greatly deviate from the mean or median are called whisker outliers and are separated out into their own columns..
+
+## SINA PLOT
+
+Sina plots, a type of violin plot, illustrate the distribution of a continuous variable as a function of a categorical one. Unlike the dot plots used in Sina plots, which depict individual data points, violin plots only display the distribution of a continuous variable by a categorical variable. Create a Sina plot using the R package ggbeeswarm. Here's an example: instance, the scenario in which to wish to generate a Sina plot of the variable denoted by the label "Race.".
+```{r}
+# Load the ggbeeswarm package
+library(ggbeeswarm)
+
+# Create a Sina plot of the Gender variable by the Race variable
+ggplot(data = dallas, aes(x = OFFICER_GENDER, y = OFFICER_HIRE_DATE)) +
+  geom_quasirandom(alpha = 0.5)
+
+```
+
+## SCATTER PLOT
+
+Using the ggplot2 package in R, to are able to generate a scatter plot that will help us visualise the relationship that exists bettoen two continuous variables (Tierney et al., 2018). For illustration's sake, let's imagine that to want to make a scatter plot comparing the "Race" variable to the "Years on force" variable.
+A specific type of plot called a dispersion plot is used to visualise the relationship bettoen two variables. Finding data patterns, trends, and outliers as toll as figuring out whether the variables might be connected in any way are some of its most useful applications. In the end, it can help in locating instances, patterns, and anomalies.
+By utilising the plot() function in R Studio, you may create a scatter plot of your data. The function creates a scatter plot by requiring two data vectors as input, one for the x-axis and one for the y-axis. The first and second variables are represented by the x- and y-axes of the plot, respectively. Labels, titles, colours, and a number of other graphical features can all be added to the plot to make it your own.
+
+
+
+```{r}
+# Create a scatter plot of the race variable against the years on force variable
+ggplot(data = dallas, aes(x = dallas$STREET_DIRECTION, y = dallas$SUBJECT_OFFENSE)) +
+  geom_point()
+
+```
+
+```{r}
+# Create a scatter plot of the race variable against the years on force variable
+ggplot(data = dallas, aes(x = dallas$DIVISION, y = dallas$LOCATION_DISTRICT)) +
+  geom_point()
+
+```
+
+# PAIR PLOT
+
+The ggpairs function found in the GGally package of R can be used to create a pair plot. By doing so, we may examine the interrelationships between the dataset's many variables. Consider the case in which you need to create a pair plot of the variables "Gender," "Race," and "Injury" for both the officer and the subject.
+A pair plot is a special case of the scatterplot framework or a matches plot. A scatter plot illustrates the interplay between multiple variables at once. Some of its best uses are in spotting out-of-the-ordinary numbers, trends, and correlations in data. A pair plot can be generated in R Studio via the pairs() function. The function takes a data frame as input and returns a matrix of scatter plots depicting the associations between each pair of variables in the data frame as output. The narrative can be made more personal by adding labels, titles, colours, and other graphical aspects.
+
+```{r}
+# Load the GGally package
+library(GGally)
+ggpairs(data = dallas[, c("SUBJECT_RACE", "SUBJECT_GENDER", "SUBJECT_INJURY")])
+ggpairs(data = dallas[, c("OFFICER_RACE", "OFFICER_GENDER", "OFFICER_INJURY")])
+
+```
+
+## CORRELATION ANALYSIS
+
+The cor() function and a heatmap can be used to calculate and visualise the correlation matrix, allowing us to examine the relationships between the continuous variables in the dataset that are associated with one another. Think about the following case: We seek to examine the relationships among the categories of "Gender," "Race," "Injury," "Injury Type," and "Arrests," among others.
+The 2016 Dallas policing dataset was initially loaded into the code using the read.csv() function. The next step is to use the cor() function to determine the correlation matrix between each of the dataset's numerical variables. When to use the sapply() function to filter out everything but numerical variables. This is significant because the cor() function is the only way to determine the degree of correlation between two numerical variables.
+After the calculation of the correlation matrix is finished, the matrix is printed to the terminal via the print() function. The last step is to generate a heatmap from the correlation matrix using the ggplot2 and reshape2 software packages. This allows for a more nuanced interpretation of the degree of association between the variables, with higher degrees of red representing stronger associations and lower degrees of blue representing weaker associations. Using the labs() function, you may give your plot a name.
+In order to learn more about the relationships between the variables that make up a dataset, correlation analysis is a useful tool. As well as highlighting interesting correlations that could be worth further investigation, it allows us to quantify the strength and direction of the relationship between two variables.
+Connection examination is a factual method for identifying the strength and direction of the straight relationship that exists between at least two factors. Finding patterns and correlations between variables, as well as testing hypotheses and making predictions, are prominent uses of this method in the field of data analysis. You can use R Studio's cor() function to perform a correlation analysis. Each pair of variables in a dataset will have their correlation coefficient determined by this method. After receiving a data frame as input, the function returns a correlation matrix detailing the coefficients of correlation for each possible pair of variables.
+
+
+```{r}
+
+# Calculate the correlation matrix for numeric variables
+cor_mat <- cor(dallas[, sapply(dallas, is.numeric)])
+
+# Print the correlation matrix
+print(cor_mat)
+
+# Visualize the correlation matrix as a heatmap
+library(ggplot2)
+library(reshape2)
+ggplot(melt(cor_mat), aes(x = Var1, y = Var2, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Correlation Matrix")
+
+
+```
+
+## TIME SERIES PLOT
+
+In this code snippet, we first use the read.csv() function to import the policing dataset that was gathered in Dallas in 2016. Following that, a Date object should be created from the date column by calling the as.Date() method with the appropriate format string.
+Because there are seven days in a toek, the frequency of 7 is used when constructing the time series object via the ts() function. Next, a time series should be displayed using the plot() method, and a major headline should be added to the plot that explains the examined variable.
+The deconstruct() method will be used to separate the time series into its trend, seasonal, and residual components, so that further analysis of the time series may be conducted. After that, you may plot each variable separately with the help of the plot() method.
+Data collected over time can be examined for trends and patterns using the study of time series. The time series can be broken down into its component elements to help you better understand the causes of fluctuations in the data and make well-informed decisions about how to respond to them.
+
+```{r}
+
+
+# Convert the date column to a Date object
+dallas$DATE <- as.Date(dallas$INCIDENT_TIME, format = "%m/%d/%Y")
+
+# Create a time series object
+dallas_ts <- ts(dallas$OFFICER_YEARS_ON_FORCE, frequency = 7)
+
+# Plot the time series
+plot(dallas_ts, main = "Years on Force with respect to Number of Incidents over Time")
+
+```
+
+## PATTERN/TREND
+
+The 2016 Dallas policing dataset was initially loaded into the code using the read.csv() function. Following that, a Date object should be created from the date column by calling the as.Date() method with the appropriate format string.
+Create a new plot object using the ggplot2 package, with the DATE column serving as the x-axis and the INCIDENT_NUM column serving as the y-axis. As a result, we may build a trend line chart showing the growing trend of occurrences over time. The next step is to use the geom_smooth() function to incorporate a smooth line into the graph. This line highlights the general upward trend in the data as it develops through time. Applying the same approach as before, this time using the DISTRICT column as a colour palette, is accomplished by using the ggtitle() function to add a primary title to the plot at the very end of the ggplot() procedure. With this information, we can construct a trend line chart showing how many incidents have occurred in each area over time. This produces a unique smoothed line for each ward, which we can then use to evaluate one section of the city against another.
+
+```{r}
+dallas$DATE <- as.Date(dallas$INCIDENT_DATE, format = "%m/%d/%Y")
+
+# Create a smoothed line plot of the number of incidents over time
+library(ggplot2)
+ggplot(dallas, aes(x = INCIDENT_DATE, y = dallas$SUBJECT_ID)) +
+  geom_smooth() +
+  ggtitle("Number of Incidents over Time with respect to Subject")
+
+```
+
+
+# SECTION 2: VISUAL APPERANCE
+
+```{r}
+# Load the ggplot2 package
+library(ggplot2)
+
+
+# Create a bar plot of the Race variable
+ggplot(data = dallas, aes(x = REASON_FOR_FORCE)) +
+  geom_bar()
+
+```
+
+```{r}
+# Load the ggplot2 package
+library(ggplot2)
+
+
+# Create a bar plot of the Race variable
+ggplot(data = dallas, aes(x = REPORTING_AREA)) +
+  geom_bar()
+
+```
+
+```{r}
+# Create a pie chart of the Race variable
+ggplot(data = dallas, aes(x = "", fill = LOCATION_DISTRICT)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+
+```
+
+```{r}
+# Create a pie chart of the Race variable
+ggplot(data = dallas, aes(x = "", fill = NUMBER_EC_CYCLES)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y")
+
+```
+
+```{r}
+table(dallas$INCIDENT_REASON, dallas$REASON_FOR_FORCE)
+```
+
+```{r}
+# Bar plot of OFFENSE_TYPE
+ggplot(dallas, aes(x = REASON_FOR_FORCE)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Distribution of Offense Types in Dallas, 2016", x = "Offense Type", y = "Count")
+```
+
+## SUBJECT RACE
+```{r}
+# Pie chart of OFFICER_RACE
+ggplot(dallas, aes(x = "", fill = SUBJECT_RACE)) +
+  geom_bar(width = 1) +
+  coord_polar(theta = "y") +
+  labs(title = "Distribution of Officer Races in Dallas, 2016")
+```
+
+```{r}
+
+ggplot(dallas, aes(x = INCIDENT_TIME)) +
+  geom_density(fill = "steelblue") +
+  labs(title = "Density Plot of Offense Date and Time in Dallas, 2016", x = "Date and Time", y = "Density")
+
+```
+
+
+```{r}
+
+ggplot(dallas, aes(x = OFFICER_INJURY, y = OFFICER_HOSPITALIZATION, fill = OFFICER_RACE)) +
+  geom_boxplot() +
+  labs(title = "Box Plot of Offense Types by Officer Gender in Dallas, 2016", x = "Officer Gender", y = "Offense Type")
+
+
+```
+
+```{r}
+
+ggplot(dallas, aes(x = INCIDENT_DATE, y = INCIDENT_TIME)) +
+  geom_point(alpha = 0.5, color = "steelblue") +
+  labs(title = "Scatter Plot of Offense Date and Time vs. Response Time in Dallas, 2016", x = "Offense Date and Time", y = "INCIDENT TIME")
+```
+
+
+
+## MAP - VISUALIZATION
+
+```{r}
+# Load required packages
+library(maps)
+library(ggplot2)
+
+# Get the map data
+tx_map <- map_data("county", "texas")
+
+# Plot the map
+ggplot(tx_map, aes(x=long, y=lat, group=group)) +
+  geom_polygon(fill="Red", color="Blue") +
+  theme_void()
+
+```
+
+
+# SECTION 3
+
+The project "Revealing the Imperceptible: Understanding the Unseen Through the Use of Rstudio Maps" includes an interactive analysis of Dallas police stops in 2016.
+In this analysis, we studied the 2016 Dallas, Texas police dataset in depth to uncover insights and trends that are often overlooked. By employing Rstudio maps and other methods of information representation, we hope to foster a more intelligent connection. Users can engage with the data in a new and exciting way using this experience.
+The inner workings of the Dallas policing system in 2016 are revealed by our analysis, which includes demographic breakdowns of drivers and ties to other variables. By highlighting issues that are typically overlooked when it comes to law enforcement and stressing transparency and comprehension as our guiding principles, we hope to initiate conversations about how to build a system that is more equal and egalitarian.
+Past the Numbers: A Comprehensive Analysis of 2016 Policing in Dallas, Texas Using R Code is the title of this review.goal of this research is to use R's skills to delve deeply into the Dallas, Texas, 2016 policing dataset, going beyond the statistically superficial statistics generally used in this kind of study.
+The goal is to use different data visualisation techniques and statistical analysis to look at the connections between things like police officers' gender and race, the types of crimes that lead to stops, and the locations of stops. In addition, I plan to use R code to further explore the data in an effort to provide insightful information and contribute to the ongoing discussion on the reform of the policing system. By conducting this evaluation, I hope to provide a comprehensive understanding of the Dallas policing landscape in 2016, highlighting both areas of progress and areas needing improvement.
+
+
+```{r}
+# Beyond the Numbers: An In-Depth Analysis of Policing in Dallas, Texas in 2016 Using R Code
+
+# Load necessary libraries
+library(tidyverse)
+library(lubridate)
+library(ggmap)
+library(ggthemes)
+
+# Load and clean data
+dallas <- read_csv("37-00049_UOF-P_2016_prepped.csv") %>%
+  mutate(STOP_DATE = mdy_hms(dallas$INCIDENT_DATE))
+
+# Explore data using visualization techniques
+ggplot(dallas, aes(x = SUBJECT_RACE, fill = SUBJECT_GENDER)) +
+  geom_bar(position = "dodge") +
+  ggtitle("Gender and Race of Officers in Dallas in 2016") +
+  theme_economist()
+
+ggplot(dallas, aes(x = dallas$SUBJECT_INJURY, fill = dallas$SUBJECT_INJURY_TYPE)) +
+  geom_bar(position = "stack") +
+  ggtitle("Types of Offenses by Gender of Subject in Dallas in 2016") +
+  theme_economist()
+
+ggplot(dallas, aes(x = dallas$LOCATION_LATITUDE, y = dallas$LOCATION_LONGITUDE)) +
+  geom_point(aes(color = SUBJECT_GENDER)) +
+  ggtitle("Location of Stops by Race of Subject in Dallas in 2016") +
+  theme_map()
+
+
+
+
+```
+
